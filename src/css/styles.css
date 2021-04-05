@@ -1,0 +1,41 @@
+@font-face {
+    font-family: "Roboto Regular";
+    src: url("../../dist/fonts/Roboto/Roboto-Regular.ttf") format("truetype");
+}
+
+body {
+    font-family: "Roboto Regular", Helvetica, Arial, sans-serif;
+    color: #fff;
+    background-color: #191414;
+    font-size: 16px;
+}
+
+body .hidden {
+    display: none;
+}
+
+input {
+    font: inherit;
+}
+
+.content {
+    max-width: 600px;
+    width: 100%;
+    display: block;
+    margin: auto;
+}
+
+.content div {
+    margin-bottom: 30px;
+}
+
+.btn {
+    color: #fff;
+    background-color: #1DB954;
+    text-decoration: none;
+    padding: 10px 15px;
+    font-size: 16px;
+    border-radius: 10px;
+    border: 0;
+    cursor: pointer;
+}
