@@ -7,3 +7,6 @@ A little tool that automatically sorts every song you liked in a specific month 
 
 ## General Logic
 - No userdata should be saved. Everything should happen locally.
+
+## Hosting
+- should be via GitHub Pages and a custom domain.
