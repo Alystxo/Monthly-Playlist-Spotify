@@ -1,7 +1,13 @@
 var access_token = '',
     expires_in = '';
     sessionStart = Date.now(),
-    requestHeader = new Headers();
+    requestHeader = new Headers(),
+    getOptions = {
+      method: 'GET',
+      headers: requestHeader,
+      redirect: 'follow'
+    },
+    userLibrary = [];
 
 //wait till dom is completly loaded before starting
 window.addEventListener('DOMContentLoaded', (event) => {
@@ -13,6 +19,7 @@ function checkStatus() {
     access_token = getHashValue('access_token');
     requestHeader.append("Authorization", "Bearer " + access_token);
     expires_in = getHashValue('expires_in');
+    userLibrary = getLibrary();
     var createForm = document.querySelector(".create-form");
     createForm.classList.remove("hidden");
   } else {
@@ -22,23 +29,16 @@ function checkStatus() {
 }
 
 function getLibrary() {
-  var requestOptions = {
-    method: 'GET',
-    headers: requestHeader,
-    redirect: 'follow'
-  };
 
   var results = [];
       results['items'] = [];
 
   var fetchNow = function(url) {
-    fetch(url, requestOptions)
+    fetch(url, getOptions)
     .then(response => response.text())
     .then(function(result) {
       result = JSON.parse(result);
-      console.log(result);
       result.items.forEach(element => {
-        console.log(element);
         results['items'].push(element);
       })
       if(result.next) {
@@ -50,6 +50,13 @@ function getLibrary() {
   fetchNow('https://api.spotify.com/v1/me/tracks?limit=50');
   
   return results;
+}
+
+function getUser() {
+  fetch("https://api.spotify.com/v1/me", getOptions)
+  .then(response => response.text())
+  .then(result => console.log(result))
+  .catch(error => console.log('error', error));
 }
 
 function createPlaylist(name) {
