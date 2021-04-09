@@ -32,11 +32,17 @@ function getLibrary() {
       results['items'] = [];
 
   var fetchNow = function(url) {
-    fetch(url, requestOptions).then(function(result) {
-      const data = result.json();
-      results['items'].append(data.items);
-      if(data.next) {
-        fetchNow(data.next);
+    fetch(url, requestOptions)
+    .then(response => response.text())
+    .then(function(result) {
+      result = JSON.parse(result);
+      console.log(result);
+      result.items.forEach(element => {
+        console.log(element);
+        results['items'].push(element);
+      })
+      if(result.next) {
+        fetchNow(result.next);
       }
     });
   }
