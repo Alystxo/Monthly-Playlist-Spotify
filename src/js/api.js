@@ -1,4 +1,7 @@
-var access_token = '';
+var access_token = '',
+    expires_in = '';
+    sessionStart = Date.now(),
+    requestHeader = new Headers();
 
 //wait till dom is completly loaded before starting
 window.addEventListener('DOMContentLoaded', (event) => {
@@ -6,42 +9,41 @@ window.addEventListener('DOMContentLoaded', (event) => {
 });
 
 function checkStatus() {
-    const urlParams = new URLSearchParams(window.location.search);
-    if(urlParams.get('code')) {
-        getToken(urlParams.get('code'));
-        var createForm = document.querySelector(".create-form");
-        createForm.classList.remove("hidden");
-        
-    } else {
-        var login = document.querySelector(".login");
-        login.classList.remove("hidden");
-    }
-}
-
-function getToken(code) {
-  async () => {
-
-    const result = await fetch('https://accounts.spotify.com/api/token', {
-        method: 'POST',
-        body: 'grant_type=authorization_code&code=' + code + '&redirect_uri=https%3A%2F%2Falystxo.github.io%2FMonthly-Playlist-Spotify%2F'
-    });
-
-    const data = await result.json();
-    access_token = data.access_token;
+  if(getHashValue('access_token')) {
+    access_token = getHashValue('access_token');
+    requestHeader.append("Authorization", "Bearer " + access_token);
+    expires_in = getHashValue('expires_in');
+    var createForm = document.querySelector(".create-form");
+    createForm.classList.remove("hidden");
+  } else {
+      var login = document.querySelector(".login");
+      login.classList.remove("hidden");
   }
 }
 
-function getAllSongsTillDate() {
-  async () => {
+function getLibrary() {
+  var requestOptions = {
+    method: 'GET',
+    headers: requestHeader,
+    redirect: 'follow'
+  };
 
-    const result = await fetch('https://api.spotify.com/v1/me/tracks&limit=50&offset=0', {
-        method: 'GET',
-        headers: { 'Authorization' : 'Bearer ' + access_token}
+  var results = [];
+      results['items'] = [];
+
+  var fetchNow = function(url) {
+    fetch(url, requestOptions).then(function(result) {
+      const data = result.json();
+      results['items'].append(data.items);
+      if(data.next) {
+        fetchNow(data.next);
+      }
     });
-
-    const data = await result.json();
-    return data;
   }
+
+  fetchNow('https://api.spotify.com/v1/me/tracks?limit=50');
+  
+  return results;
 }
 
 function createPlaylist(name) {
@@ -68,4 +70,9 @@ function addSongsToPlaylist(songs) {
     const data = await result.json();
     return data.access_token;
   }
+}
+
+function getHashValue(key) {
+  var matches = location.hash.match(new RegExp(key+'=([^&]*)'));
+  return matches ? matches[1] : null;
 }
