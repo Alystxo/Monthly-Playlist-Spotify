@@ -38,10 +38,16 @@ function checkStatus() {
 
 function startProcess(monthString) {
   var sortedTracks = sortSongs(userLibrary),
-      reachedMonth = false;
+      reachedMonth = false,
+      delay = 1000;
+
   Object.keys(sortedTracks).forEach(function(key){
-    if (!reachedMonth) createPlaylistWithTracks(key, sortedTracks[key]);
-    if (key == monthString) reachedMonth = true;
+    //looks special, right? Just to make sure we dont hit the spotify api limit
+    delay += delay;
+    setTimeout(function() {
+      if (!reachedMonth) createPlaylistWithTracks(key, sortedTracks[key]);
+      if (key == monthString) reachedMonth = true;
+    }, delay);
  });
 }
 
@@ -107,18 +113,19 @@ function createPlaylistWithTracks(name, tracks) {
     postOptions.body = raw;
   })
   .then(() => {
-    fetch("https://api.spotify.com/v1/playlists/"+ playlistID +"/tracks", postOptions)
-    .then(response => response.text())
-    .then(result => {
-      var li = document.createElement('li');
-      li.appendChild(document.createTextNode('Sucess! Created Playlist ' + name));
-      log.appendChild(li);
-    })
-    .catch(error => {
+    if (playlistID !== 'undefined') {
+      fetch("https://api.spotify.com/v1/playlists/"+ playlistID +"/tracks", postOptions)
+      .then(response => response.text())
+      .then(result => {
+        var li = document.createElement('li');
+        li.appendChild(document.createTextNode('Sucess! Created Playlist ' + name));
+        log.appendChild(li);
+      })
+    } else {
       var li = document.createElement('li');
       li.appendChild(document.createTextNode('Failed to create Playlist ' + name));
       log.appendChild(li);
-    });
+    }
   })
   .catch(error => console.log('error', error));
 }
