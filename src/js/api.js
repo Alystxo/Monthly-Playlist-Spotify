@@ -17,9 +17,10 @@ window.addEventListener('DOMContentLoaded', (event) => {
       e.preventDefault();
       var sortedTracks = sortSongs(userLibrary),
           data = new FormData(form),
-          date = new Date(data.get('year')+'.'+data.get('month'));
+          date = new Date(data.get('year')+'.'+data.get('month')),
+          selectedMonth = monthString(date);
 
-      createPlaylistWithTracks(date, sortedTracks[date]);
+      createPlaylistWithTracks(selectedMonth, sortedTracks[selectedMonth]);
     })
 });
 
