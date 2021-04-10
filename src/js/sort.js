@@ -6,7 +6,7 @@ function sortSongs(input) {
     input.items.forEach(element => {
         //Defining dates. 
         var added_at = new Date(element.added_at);
-        var date = (added_at.toLocaleString('default', { month: 'long', year: '2-digit'}));
+        var date = monthString(added_at);
 
         //Filling the array with tracks and dates. 
         if (tracks[date]) {
@@ -15,5 +15,5 @@ function sortSongs(input) {
             tracks[date] = [element.track.uri];
         } 
     });
-    console.log(tracks);
+    return tracks;
 }

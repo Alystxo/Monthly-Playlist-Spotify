@@ -3,7 +3,7 @@
     <head>
         <!-- Meta Section -->
         <meta charset="utf-8">
-        <title>Monthy Playlist for Spotify</title>
+        <title>Monthly Playlist for Spotify</title>
         <meta name="description" content="Automatically sorts your liked songs into monthly playlists!" />
         <meta name="robots" content="index, follow">
 
@@ -29,12 +29,12 @@
                 <a class="btn" href="https://accounts.spotify.com/de/authorize?response_type=token&client_id=3122d43f35944aefbf1b523113c9ace7&scope=user-library-read%2Cuser-read-private%2Cuser-read-email%2Cplaylist-modify-public%2Cplaylist-modify-private&redirect_uri=https%3A%2F%2Falystxo.github.io%2FMonthly-Playlist-Spotify%2F">Login with Spotify</a>
             </div>
 
-            <div class="create-form hidden">
-                <form>
+            <div class="create-form hiden">
+                <form id="form">
                     <label>Starting from today, how far would you like your songs to be sorted?</label>
                     <div class="date-select">
-                        <select id="year" name="year">
-                            <option>year</option>
+                        <select id="year" name="year" required>
+                            <option value="">year</option>
                             <option value="2010">2010</option>
                             <option value="2011">2011</option>
                             <option value="2012">2012</option>
@@ -48,8 +48,8 @@
                             <option value="2020">2020</option>
                             <option value="2021">2021</option>
                         </select>
-                        <select id="month" name="month">
-                            <option>month</option>
+                        <select id="month" name="month" required>
+                            <option value="">month</option>
                             <option value="01">January</option>
                             <option value="02">February</option>
                             <option value="03">March</option>
@@ -64,7 +64,7 @@
                             <option value="12">December</option>
                         </select>
                     </div>
-                    <input type="submit" class="btn" name="createplaylist" value="Create Monthly Playlists">
+                    <input type="submit" class="btn" value="Create Monthly Playlists">
                 </form>
             </div>
         </div>

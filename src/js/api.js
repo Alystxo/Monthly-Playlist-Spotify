@@ -11,6 +11,14 @@ var access_token = '',
 //wait till dom is completly loaded before starting
 window.addEventListener('DOMContentLoaded', (event) => {
     checkStatus();
+
+    var form = document.getElementById('form');
+    form.addEventListener("submit", function(e) {
+      e.preventDefault();
+      var data = new FormData(form);
+      var date = new Date(data.get('year')+'.'+data.get('month'));
+      startProcess(monthString(date));
+    })
 });
 
 function checkStatus() {
@@ -26,6 +34,15 @@ function checkStatus() {
       var login = document.querySelector(".login");
       login.classList.remove("hidden");
   }
+}
+
+function startProcess(monthString) {
+  var sortedTracks = sortSongs(userLibrary),
+      reachedMonth = false;
+  Object.keys(sortedTracks).forEach(function(key){
+    if (!reachedMonth) createPlaylistWithTracks(key, sortedTracks[key]);
+    if (key == monthString) reachedMonth = true;
+ });
 }
 
 function getLibrary() {
@@ -64,15 +81,16 @@ function getUser() {
 
 function createPlaylistWithTracks(name, tracks) {
   //copy header as local var so we can modify it only for this request
-  var requestHeader = requestHeader;
-  requestHeader.append("Content-Type", "application/json");
+  var postHeader = new Headers();
+  postHeader.append("Authorization", "Bearer " + access_token);
+  postHeader.append("Content-Type", "application/json");
   var raw = JSON.stringify({
     "name": name,
     "description": "All my liked songs from " + name + ". Generated with Monthly Playlist for Spotify by @Alystxo and @MarcoPNS"
   });
   var postOptions = {
     method: 'POST',
-    headers: requestHeader,
+    headers: postHeader,
     body: raw,
     redirect: 'follow'
   };
@@ -98,4 +116,8 @@ function createPlaylistWithTracks(name, tracks) {
 function getHashValue(key) {
   var matches = location.hash.match(new RegExp(key+'=([^&]*)'));
   return matches ? matches[1] : null;
+}
+
+function monthString(date) {
+  return date.toLocaleString('default', { month: 'long', year: '2-digit'});
 }
