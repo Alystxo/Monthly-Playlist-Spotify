@@ -15,9 +15,11 @@ window.addEventListener('DOMContentLoaded', (event) => {
     var form = document.getElementById('form');
     form.addEventListener("submit", function(e) {
       e.preventDefault();
-      var data = new FormData(form);
-      var date = new Date(data.get('year')+'.'+data.get('month'));
-      startProcess(monthString(date));
+      var sortedTracks = sortSongs(userLibrary),
+          data = new FormData(form),
+          date = new Date(data.get('year')+'.'+data.get('month'));
+
+      createPlaylistWithTracks(date, sortedTracks[date]);
     })
 });
 
@@ -34,21 +36,6 @@ function checkStatus() {
       var login = document.querySelector(".login");
       login.classList.remove("hidden");
   }
-}
-
-function startProcess(monthString) {
-  var sortedTracks = sortSongs(userLibrary),
-      reachedMonth = false,
-      delay = 1000;
-
-  Object.keys(sortedTracks).forEach(function(key){
-    //looks special, right? Just to make sure we dont hit the spotify api limit
-    delay += delay;
-    setTimeout(function() {
-      if (!reachedMonth) createPlaylistWithTracks(key, sortedTracks[key]);
-      if (key == monthString) reachedMonth = true;
-    }, delay);
- });
 }
 
 function getLibrary() {
