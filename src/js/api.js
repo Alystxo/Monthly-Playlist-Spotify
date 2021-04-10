@@ -71,9 +71,8 @@ function getLibrary() {
 
 function getUser() {
   fetch("https://api.spotify.com/v1/me", getOptions)
-  .then(response => response.text())
+  .then(response => response.json())
   .then(result => {
-    result = JSON.parse(result);
     userID = result.id;
   })
   .catch(error => console.log('error', error));
@@ -81,6 +80,7 @@ function getUser() {
 
 function createPlaylistWithTracks(name, tracks) {
   //copy header as local var so we can modify it only for this request
+  var log = document.getElementById("log");
   var postHeader = new Headers();
   postHeader.append("Authorization", "Bearer " + access_token);
   postHeader.append("Content-Type", "application/json");
@@ -105,10 +105,20 @@ function createPlaylistWithTracks(name, tracks) {
       "uris": tracks,
     });
     postOptions.body = raw;
+  })
+  .then(() => {
     fetch("https://api.spotify.com/v1/playlists/"+ playlistID +"/tracks", postOptions)
     .then(response => response.text())
-    .then(result => console.log(JSON.parse(result)))
-    .catch(error => console.log('error', error));
+    .then(result => {
+      var li = document.createElement('li');
+      li.appendChild(document.createTextNode('Sucess! Created Playlist ' + name));
+      log.appendChild(li);
+    })
+    .catch(error => {
+      var li = document.createElement('li');
+      li.appendChild(document.createTextNode('Failed to create Playlist ' + name));
+      log.appendChild(li);
+    });
   })
   .catch(error => console.log('error', error));
 }
